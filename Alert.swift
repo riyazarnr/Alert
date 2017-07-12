@@ -15,21 +15,14 @@ enum AlertButton {
     
 };
 
-class Alert: UIView {
-
-    /*
-    // Only override draw() if you perform custom drawing.
-    // An empty implementation adversely affects performance during animation.
-    override func draw(_ rect: CGRect) {
-        // Drawing code
-    }
-    */
+class VYAlertView: UIView {
     @IBOutlet weak var AlertTitleLabel: UILabel!
     @IBOutlet weak var AlertMessageLabel: UILabel!
     
     @IBOutlet weak var leftButton: UIButton!
     @IBOutlet weak var rightButton: UIButton!
     
+    @IBOutlet weak var contentView: UIView!
     // Completion Block for Buttons
     
     //    var alertInputActions : ((AlertButton) -> AlertButton)?
@@ -49,11 +42,6 @@ class Alert: UIView {
     }
     
     private func SetUpAlert(){
-        AlertTitleLabel.text = ""
-        AlertMessageLabel.text = ""
-        
-        leftButton.setTitle("Yes", for: .normal)
-        rightButton.setTitle("No", for: .normal)
         
     }
     
@@ -64,19 +52,31 @@ class Alert: UIView {
         if self.alertInputActions != nil {
             alertInputActions!(AlertButton.VYLeft)
         }
+        //        if (delegate != nil) {
+        //   delegate?.buttonActionTapped(.VYLeft)
+        //        }
     }
     @IBAction func rightButtonTapped(_ sender: Any) {
         if self.alertInputActions != nil {
             alertInputActions!(AlertButton.VYRight)
             self.hideValeyAlert()
         }
+        //        if (delegate != nil) {
+        self.hideValeyAlert()
+        //        }
     }
     
     
-    func showAlertViewWithTitle(titleStr:String,messageStr:String) -> () {
-        let alert:VYAlertView = Bundle.main.loadNibNamed("VYAlertView", owner: self, options: nil)?.first as! VYAlertView
-        alert.frame = UIApplication.shared.keyWindow!.frame
+    class  func showAlertViewWithTitle(titleStr:String,messageStr:String) -> () {
         let viewController = UIApplication.shared.keyWindow?.rootViewController
+        let alert:VYAlertView = Bundle.main.loadNibNamed("VYAlertView", owner: nil, options: nil)?.first as! VYAlertView
+        alert.frame = UIApplication.shared.keyWindow!.frame
+        alert.AlertTitleLabel.text = titleStr
+        alert.AlertMessageLabel.text = messageStr
+        alert.contentView.center = alert.center
+        if alert.alertInputActions == nil {
+            alert.alertInputActions?(AlertButton.VYNil)
+        }
         if (viewController!.isKind(of:UIViewController.self)) {
             let vc = viewController
             vc!.view.addSubview(alert)
@@ -97,5 +97,5 @@ class Alert: UIView {
             responder = responder?.next
         }
     }
-    
 }
+
